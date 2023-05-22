@@ -4,7 +4,7 @@ MEETING SERVICE is a microservice that makes a link between a UI and a data base
 
 ## Installation
 
-Use a nodejs enviroment.
+Use a nodejs v18.6.0 enviroment.
 
 ```bash
 npm install
