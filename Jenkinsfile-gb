@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    enviroment {
+        DOCKER_PASS = credentials('docker_pass')
+    }
     stages {
         stage('Test') {
             agent { docker 'node:18-alpine3.16' }
@@ -12,6 +15,18 @@ pipeline {
                     archiveArtifacts artifacts: 'test-report.html', followSymlinks: false
                     // archiveArtifacts artifacts: '/node_modules/jest-html-reporter', followSymlinks: false
                 }
+            }
+        }
+        stage('Package'){
+            steps {
+                sh 'docker build -t Meeting_Service .'
+            }
+        }
+        stage('Publish'){
+            steps {
+                sh 'docker login -u crvg -p ${DOCKER_PASS}'
+                sh 'docker tag example-java-web crgv/java-web'
+                sh 'docker push crgv/java-web'
             }
         }
     } 
