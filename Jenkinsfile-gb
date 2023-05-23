@@ -10,7 +10,7 @@ pipeline {
             post {
                 always {
                     archiveArtifacts artifacts: 'test-report.html', followSymlinks: false
-                    archiveArtifacts artifacts: '/node_modules/jest-html-reporter', followSymlinks: false
+                    // archiveArtifacts artifacts: '/node_modules/jest-html-reporter', followSymlinks: false
                 }
             }
         }
