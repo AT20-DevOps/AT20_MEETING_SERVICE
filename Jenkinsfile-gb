@@ -7,6 +7,12 @@ pipeline {
                 sh 'npm install'
                 sh 'npm test'
             }
+            post {
+                always {
+                    archiveArtifacts artifacts: 'test-report.html', followSymlinks: false
+                    // archiveArtifacts artifacts: '/node_modules/jest-html-reporter', followSymlinks: false
+                }
+            }
         }
     } 
 }
