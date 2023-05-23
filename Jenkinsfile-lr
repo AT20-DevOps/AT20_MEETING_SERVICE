@@ -25,7 +25,7 @@ pipeline {
             steps {
                 sh 'docker login -u lorenasing -p ${DOCKER_PASS}'
                 sh 'docker tag at20_meeting_service lorenasing/meeting_service'
-                sh 'docker push lorenasing/meeting_service:'
+                sh 'docker push lorenasing/meeting_service'
             }
         }
     }
