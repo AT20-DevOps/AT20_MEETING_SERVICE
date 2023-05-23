@@ -19,13 +19,13 @@ pipeline {
         }
         stage('Package'){
             steps {
-                sh 'docker build -t Meeting_Service .'
+                sh 'docker build -t at20-meeting_service .'
             }
         }
         stage('Publish'){
             steps {
                 sh 'docker login -u gioblanco -p ${DOCKER_PASS}'
-                sh 'docker tag Meeting_Service gioblanco/meeting-service'
+                sh 'docker tag at20-meeting_service gioblanco/meeting-service'
                 sh 'docker push gioblanco/meeting-service'
             }
         }
