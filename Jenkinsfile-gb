@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+        DOCKER_PASS = credentials('docker_pass')
+    }
     stages {
         stage('Test') {
             agent { docker 'node:18-alpine3.16' }
@@ -12,6 +15,18 @@ pipeline {
                     archiveArtifacts artifacts: 'test-report.html', followSymlinks: false
                     // archiveArtifacts artifacts: '/node_modules/jest-html-reporter', followSymlinks: false
                 }
+            }
+        }
+        stage('Package'){
+            steps {
+                sh 'docker build -t at20-meeting_service .'
+            }
+        }
+        stage('Publish'){
+            steps {
+                sh 'docker login -u gioblanco -p ${DOCKER_PASS}'
+                sh 'docker tag at20-meeting_service gioblanco/meeting-service'
+                sh 'docker push gioblanco/meeting-service'
             }
         }
     } 
