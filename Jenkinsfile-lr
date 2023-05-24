@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    environment {
+      DOCKER_PASS = credentials('docker_pass')  
+    }
     stages {
         stage('Test'){
             agent { docker 'node:18-alpine3.16' }
@@ -12,6 +15,18 @@ pipeline {
                     archiveArtifacts artifacts: 'test-report.html', followSymlinks: false
                 }
             }    
+        }
+        stage('Package') {
+            steps {
+                sh 'docker build -t at20_meeting_service .'
+            }
+        }
+        stage('Publish') {
+            steps {
+                sh 'docker login -u lorenasing -p ${DOCKER_PASS}'
+                sh 'docker tag at20_meeting_service lorenasing/meeting_service'
+                sh 'docker push lorenasing/meeting_service'
+            }
         }
     }
 }
