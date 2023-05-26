@@ -19,7 +19,7 @@ pipeline {
         }
         stage('CodeInspection'){
             steps {
-                withSonarQubeEnv('sonar_scanner'){
+                withSonarQubeEnv('sonarcloud'){
                     sh '/var/jenkins_home/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner \
                         -Dsonar.organization=at20-lr \
                         -Dsonar.projectKey=at20-lr \
