@@ -18,7 +18,9 @@ pipeline {
             }
         }
         stage('CodeInspection'){
-            sh 'sonar-scanner   -Dsonar.organization=gb-at20   -Dsonar.projectKey=AT20-GB   -Dsonar.sources=.   -Dsonar.host.url=https://sonarcloud.io'
+            steps{
+                sh 'sonar-scanner   -Dsonar.organization=gb-at20   -Dsonar.projectKey=AT20-GB   -Dsonar.sources=.   -Dsonar.host.url=https://sonarcloud.io'
+            }
         }
         stage('Package'){
             steps {
