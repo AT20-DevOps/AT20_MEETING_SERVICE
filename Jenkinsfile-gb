@@ -52,5 +52,17 @@ pipeline {
                 sh 'docker push gioblanco/meeting-service'
             }
         }
+        stage('DeployToDev'){
+            steps {
+                sh 'docker compose -f docker-compose-gb.yaml up -d'
+            }
+        }
     } 
+    post {
+        always {
+            sh 'docker image prune -a'
+            sh 'docker rmi $(docker images -f "dangling=true" -q)'
+            sh 'docker system prune -a'
+        }
+    }
 }
