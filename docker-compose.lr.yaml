@@ -1,0 +1,7 @@
+version: '3.7'
+
+services:
+  webApp:
+    image: lorenasing/meeting_service
+    ports:
+      - "8081:8080"
