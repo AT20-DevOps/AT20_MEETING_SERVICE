@@ -53,5 +53,17 @@ pipeline {
                 sh 'docker push lorenasing/meeting_service'
             }
         }
+        stage('DeployToDev') {
+            steps {
+                sh 'docker-compose -f docker-compose.lr.yaml up -d'
+                sh 'echo command to run smoke test'
+            }
+        }
+    }
+    post {
+        always {
+            sh 'docker rmi $(docker images -f "dangling=true" -q)'
+            sh 'docker system prune -a'
+        }
     }
 }
