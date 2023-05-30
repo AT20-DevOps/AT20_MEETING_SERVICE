@@ -1,8 +1,9 @@
-version: '3.7'
+version: '3.5'
 services:
-  webApp:
+  meeting:
     image: gioblanco/meeting-service
     ports:
       - '9797:9797'
     environment:
-      - PINO_LOG_LEVEL="info"
+      PORT: 9797
+      PINO_LOG_LEVEL: "info"

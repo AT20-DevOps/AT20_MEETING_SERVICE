@@ -55,6 +55,7 @@ pipeline {
         stage('DeployToDev'){
             steps {
                 sh 'docker-compose -f docker-compose.gb.yaml up -d'
+                sh 'echo command to run smoke test'
             }
         }
     } 
