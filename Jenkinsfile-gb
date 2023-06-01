@@ -55,8 +55,12 @@ pipeline {
         }
         stage('DeployToDev'){
             steps {
+                sh 'docker-compose -f docker-compose.gb.yaml up -d'
+            }
+        }
+        stage('DeployToAUTO'){
+            steps {
                 sh 'DOCKER_HOST=ssh://$TARGET_HOST docker-compose -f docker-compose.gb.yaml up -d'
-                sh 'echo command to run smoke test'
             }
         }
     } 
