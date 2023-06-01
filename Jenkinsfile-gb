@@ -44,14 +44,14 @@ pipeline {
         }
         stage('Package'){
             steps {
-                sh 'docker build -t at20-meeting_service .'
+                sh 'docker build -t at20-meeting_service:${env.GIT_COMMIT} .'
             }
         }
         stage('Publish'){
             steps {
                 //sh 'export TAG_VERSION=${git log --pretty=format:'%h' -n 1}'
                 sh 'docker login -u gioblanco -p ${DOCKER_PASS}'
-                sh 'docker tag at20-meeting_service gioblanco/meeting-service:${env.GIT_COMMIT}'
+                sh 'docker tag at20-meeting_service:${env.GIT_COMMIT} gioblanco/meeting-service:${env.GIT_COMMIT}'
                 sh 'docker push gioblanco/meeting-service:${env.GIT_COMMIT}'
             }
         }
