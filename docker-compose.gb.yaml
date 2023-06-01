@@ -1,0 +1,9 @@
+version: '3.5'
+services:
+  meeting:
+    image: gioblanco/meeting-service
+    ports:
+      - '9797:9797'
+    environment:
+      PORT: 9797
+      PINO_LOG_LEVEL: "info"
