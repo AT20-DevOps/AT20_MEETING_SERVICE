@@ -5,6 +5,8 @@ pipeline {
         SONAR_TOKEN = credentials('sonar_token')
         TARGET_HOST = '192.168.56.71'
         //TAG_VERSION = '1.0'
+        GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
+
     }
     stages {
         stage('Test') {
@@ -44,26 +46,26 @@ pipeline {
         }
         stage('Package'){
             steps {
-                sh 'docker build -t at20-meeting_service:${env.GIT_COMMIT} .'
+                sh 'docker build -t at20-meeting_service .'
             }
         }
         stage('Publish'){
             steps {
                 //sh 'export TAG_VERSION=${git log --pretty=format:'%h' -n 1}'
                 sh 'docker login -u gioblanco -p ${DOCKER_PASS}'
-                sh 'docker tag at20-meeting_service:${env.GIT_COMMIT} gioblanco/meeting-service:${env.GIT_COMMIT}'
-                sh 'docker push gioblanco/meeting-service:${env.GIT_COMMIT}'
+                sh 'docker tag at20-meeting_service gioblanco/meeting-service:${GIT_COMMIT_HASH}'
+                sh 'docker push gioblanco/meeting-service:${GIT_COMMIT_HASH}'
             }
         }
         stage('DeployToDev'){
             steps {
-                sh 'docker-compose -e TAG=${env.GIT_COMMIT} -f docker-compose.gb.yaml up -d'
+                sh 'export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose -f docker-compose.gb.yaml up -d'
                 sh 'echo command to run smoke test'
             }
         }
         stage('DeployToAUTO'){
             steps {
-                sh 'DOCKER_HOST=ssh://$TARGET_HOST docker-compose -e TAG=${env.GIT_COMMIT} -f docker-compose.gb.yaml up -d'
+                sh 'export TAG_VERSION=${GIT_COMMIT_HASH} && DOCKER_HOST=ssh://$TARGET_HOST docker-compose -f docker-compose.gb.yaml up -d'
                 sh 'echo command to run automation tests'
             }
         }
