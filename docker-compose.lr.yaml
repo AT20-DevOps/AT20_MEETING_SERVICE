@@ -2,6 +2,6 @@ version: '3.7'
 
 services:
   webApp:
-    image: lorenasing/meeting_service
+    image: lorenasing/meeting_service:${TAG_VERSION}
     ports:
       - "8081:8080"
