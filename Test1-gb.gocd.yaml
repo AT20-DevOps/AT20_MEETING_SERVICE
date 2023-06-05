@@ -28,8 +28,8 @@ pipelines:
             - ubuntu
             tasks:
             - script: |
-                /root/.nvm/versions/node/v18.16.0/lib/node_modules/npm install
-                /root/.nvm/versions/node/v18.16.0/lib/node_modules/npm test
+                npm install
+                npm test
             artifacts:
             - build:
                 source: test-report.html
