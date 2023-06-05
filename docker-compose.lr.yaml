@@ -4,4 +4,7 @@ services:
   webApp:
     image: lorenasing/meeting_service:${TAG_VERSION}
     ports:
-      - "8081:8080"
+      - '9797:9797'
+    environment:
+      PORT: 9797
+      PINO_LOG_LEVEL: "info"
