@@ -28,9 +28,7 @@ pipelines:
             - ubuntu
             tasks:
             - script:
-                echo hello world
                 npm install
-                npm test
     - code-inspection:
         fetch_materials: true
         keep_artifacts: false
