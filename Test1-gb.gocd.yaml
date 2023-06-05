@@ -27,7 +27,7 @@ pipelines:
             resources:
             - ubuntu
             tasks:
-            - script:
+            - script: |
                 npm install
                 npm test
     - code-inspection:
