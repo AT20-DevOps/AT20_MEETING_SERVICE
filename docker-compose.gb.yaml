@@ -1,7 +1,7 @@
 version: '3.5'
 services:
   meeting:
-    image: gioblanco/meeting-service
+    image: gioblanco/meeting-service:${TAG_VERSION}
     ports:
       - '9797:9797'
     environment:
