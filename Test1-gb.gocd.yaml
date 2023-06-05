@@ -30,6 +30,9 @@ pipelines:
             - script: |
                 npm install
                 npm test
+            artifacts:
+            - build:
+                source: test-report.html
     - code-inspection:
         fetch_materials: true
         keep_artifacts: false
