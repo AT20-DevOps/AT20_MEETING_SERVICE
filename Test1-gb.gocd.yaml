@@ -33,6 +33,7 @@ pipelines:
             artifacts:
             - build:
                 source: test-report.html
+                destination: html_report
     - code-inspection:
         fetch_materials: true
         keep_artifacts: false
