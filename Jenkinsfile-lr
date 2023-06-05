@@ -3,7 +3,7 @@ pipeline {
     environment {
       DOCKER_PASS = credentials('docker_pass')
       SONAR_TOKEN = credentials('sonar_token')
-      //TARGET_HOST = 192.168.56.20
+      TARGET_HOST = '192.168.56.20'
       GIT_COMMIT_HASH = sh (script: "git rev-parse --short HEAD", returnStdout: true)
     }   
     stages {
@@ -51,8 +51,8 @@ pipeline {
         stage('Publish') {
             steps {
                 sh 'docker login -u lorenasing -p ${DOCKER_PASS}'
-                sh 'docker tag at20_meeting_service lorenasing/meeting_service'
-                sh 'docker push lorenasing/meeting_service'
+                sh 'docker tag at20_meeting_service lorenasing/meeting_service:${GIT_COMMIT_HASH}'
+                sh 'docker push lorenasing/meeting_service:${GIT_COMMIT_HASH}'
             }
         }
         stage('DeployToDev') {
@@ -63,7 +63,7 @@ pipeline {
         }
         stage('DeployAuto') {
             steps {
-                sh 'DOCKER_HOST=ssh://$TARGET_HOST docker-compose -f docker-compose.lr.yaml up -d'
+                sh 'TAG_VERSION=${GIT_COMMIT_HASH} DOCKER_HOST=ssh://$TARGET_HOST docker-compose -f docker-compose.lr.yaml up -d'
                 sh 'echo command to run automation tests'
             }
         }
