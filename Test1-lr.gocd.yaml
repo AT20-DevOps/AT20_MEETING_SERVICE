@@ -24,12 +24,14 @@ pipelines:
         jobs:
           unit-test:
             timeout: 0
+            resources:
+            - ubuntu
             tasks:
             - exec:
                 arguments:
-                - Hello
-                - World
-                command: echo
+                - install
+                - run
+                command: npm
                 run_if: passed
           code_coverage:
             timeout: 0
@@ -49,6 +51,8 @@ pipelines:
         jobs:
           sonar:
             timeout: 0
+            resources:
+            - ubuntu
             tasks:
             - exec:
                 arguments:
