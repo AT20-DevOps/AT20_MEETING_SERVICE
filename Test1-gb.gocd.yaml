@@ -11,7 +11,7 @@ pipelines:
         username: GioBlanco
         shallow_clone: false
         auto_update: true
-        branch: task9-gb
+        branch: task10
         encrypted_password: AES:Wey6o299QCHHaHkYbzFuvQ==:AS+IvBKSX61BzsRj4K4b6A==
     stages:
     - Test:
@@ -24,21 +24,16 @@ pipelines:
         jobs:
           unit-test:
             timeout: 0
+            resources:
+            - ubuntu
             tasks:
-            - exec:
-                arguments:
-                - hello
-                - world
-                command: echo
-                run_if: passed
-          code_coverage:
-            timeout: 0
-            tasks:
-            - exec:
-                arguments:
-                - -la
-                command: ls
-                run_if: passed
+            - script: |
+                npm install
+                npm test
+            artifacts:
+            - build:
+                source: test-report.html
+                destination: html_report
     - code-inspection:
         fetch_materials: true
         keep_artifacts: false
@@ -49,6 +44,8 @@ pipelines:
         jobs:
           sonar:
             timeout: 0
+            resources: 
+            - ubuntu
             tasks:
             - exec:
                 arguments:
