@@ -12,7 +12,7 @@ pipelines:
         shallow_clone: false
         auto_update: true
         branch: taskLR-10
-        encrypted_password: AES:9szTJ+P0QMW+/2nTqiAd8Q==:e89x0BD7J0icgsfYSKdgVQ==
+        encrypted_password: AES:6a4/4/OoKZxamQZgXIBYvA==:5LzbO4pHEhy2wqbprrvUWA==
     stages:
     - Test:
         fetch_materials: true
@@ -24,6 +24,8 @@ pipelines:
         jobs:
           unit-test:
             timeout: 0
+            resources:
+            - ubuntu
             tasks:
             - exec:
                 arguments:
@@ -49,6 +51,8 @@ pipelines:
         jobs:
           sonar:
             timeout: 0
+            resources:
+            - ubuntu
             tasks:
             - exec:
                 arguments:
