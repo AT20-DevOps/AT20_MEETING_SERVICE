@@ -13,7 +13,7 @@ pipelines:
         username: GioBlanco
         shallow_clone: false
         auto_update: true
-        branch: task10
+        branch: task11
         encrypted_password: AES:Wey6o299QCHHaHkYbzFuvQ==:AS+IvBKSX61BzsRj4K4b6A==
     stages:
     - Test:
