@@ -43,6 +43,8 @@ pipelines:
                 source: Dockerfile
             - build:
                 source: .dockerignore
+            - build:
+                source: src
     - code-inspection:
         fetch_materials: false
         keep_artifacts: false
@@ -58,7 +60,7 @@ pipelines:
             tasks:
             - fetch:
                 is_file: false
-                source: node_modules
+                source: src
                 stage: Test
                 job: unit-test
                 run_if: passed
