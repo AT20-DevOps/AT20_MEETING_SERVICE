@@ -2,6 +2,9 @@ version: '3.7'
 
 services:
   webApp:
-    image: lorenasing/meeting_service
+    image: lorenasing/meeting_service:${TAG_VERSION}
     ports:
-      - "8081:8080"
+      - '8082:8082'
+    environment:
+      PORT: 8082
+      PINO_LOG_LEVEL: "info"
