@@ -9,7 +9,7 @@ pipelines:
       GIT_COMMIT_HASH: 1.2
     secure_variables:
       SONAR_TOKEN: AES:5Y+WdbCALNBBhH4RP7heqA==:WOpYrtphrghvSQ3XMOb3SQFJCzMK6rZqjdDfPO1A/s5hfZfGLUqBPVMbjxNWnZC4
-      DOCKER_PASS: AES:p/kVIIobE2VL5O156ptGkw==:zxZody/3sdlAne+F9/xQqQ==
+      DOCKER_PASS: AES:JamLUpg2O136hJ2Y+W5p/w==:wx1MbsOidSridzB5/KlXwL+VLW3nUE+PjhMhBxuOpxHISu4mHCoNaYzOAwmQG/27
     materials:
       git-89e38d1:
         git: https://github.com/AT20-DevOps/AT20_MEETING_SERVICE.git
@@ -40,7 +40,9 @@ pipelines:
                 source: test-report.html
                 destination: html_report
             - build:
-                source: node_modules
+                source: Dockerfile
+            - build:
+                source: .dockerignore
     - code-inspection:
         fetch_materials: false
         keep_artifacts: false
@@ -81,7 +83,7 @@ pipelines:
             tasks:
             - fetch:
                 is_file: false
-                source: build
+                source: .dockerignore
                 stage: Test
                 job: unit-test
                 run_if: passed
