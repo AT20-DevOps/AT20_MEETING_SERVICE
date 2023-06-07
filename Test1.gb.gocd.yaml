@@ -16,7 +16,7 @@ pipelines:
         username: GioBlanco
         shallow_clone: false
         auto_update: true
-        branch: task11
+        branch: task12-gb
         encrypted_password: AES:Wey6o299QCHHaHkYbzFuvQ==:AS+IvBKSX61BzsRj4K4b6A==
     stages:
     - Test:
@@ -68,7 +68,7 @@ pipelines:
                         -Dsonar.sources=. \
                         -Dsonar.host.url=https://sonarcloud.io
     - PackageAndPublish:
-        fetch_materials: true
+        fetch_materials: false
         keep_artifacts: false
         clean_workspace: false
         approval:
@@ -86,3 +86,59 @@ pipelines:
                 docker login -u gioblanco -p ${DOCKER_PASS}
                 docker tag at20-meeting_service gioblanco/meeting-service:${GIT_COMMIT_HASH}
                 docker push gioblanco/meeting-service:${GIT_COMMIT_HASH}
+            artifacts:
+              source: docker-compose.gb.yaml
+  Acceptance:
+    group: AT20Group
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    environment_variables:
+      GIT_COMMIT_HASH: 1.2
+    materials:
+      Test1:
+        pipeline: Test1
+        stage: PackageAndPublish
+    stages:
+    - DeployToDev:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          deployToDev:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - fetch:
+                pipeline: Test1
+                stage: PackageAndPublish
+                job: docker
+                source: docker-compose.gb.yaml
+                is_file: true
+                run_if: passed
+            - script: |
+                echo deploy here
+                ls -la
+                export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose -f docker-compose.gb.yaml up -d
+    - Smoke:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          test:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - script: |
+                echo command to run smoke test 
+  #Pull the images needed in the docker-compose.yaml
+  #deploy in dev:
+  #Run tests:
