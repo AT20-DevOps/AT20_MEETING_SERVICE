@@ -61,7 +61,7 @@ pipelines:
                 run_if: passed
             - script: |
                 ls -la
-                echo /godata/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner \
+                /godata/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner \
                         -Dsonar.organization=at20-lr \
                         -Dsonar.projectKey=at20-lr \
                         -Dsonar.sources=. \
