@@ -1,2 +1,7 @@
 .env
 loggerService.js
+/coverage
+/node_modules
+.gitignore
+Jenkinsfile-gb
+Jenkinsfile-lr
