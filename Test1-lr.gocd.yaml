@@ -68,7 +68,7 @@ pipelines:
                         -Dsonar.sources=. \
                         -Dsonar.host.url=https://sonarcloud.io
     - PackageAndPublish:
-        fetch_materials: false
+        fetch_materials: true
         keep_artifacts: false
         clean_workspace: false
         approval:
@@ -80,12 +80,6 @@ pipelines:
             resources:
             - docker
             tasks:
-            - fetch:
-                is_file: false
-                source: meeting_service
-                stage: Test
-                job: unit-test
-                run_if: passed
             - script: |
                 ls -la
                 docker build -t at20_meeting_service .
