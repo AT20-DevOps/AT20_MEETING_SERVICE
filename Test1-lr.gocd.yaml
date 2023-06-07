@@ -9,6 +9,7 @@ pipelines:
       GIT_COMMIT_HASH: 1.2
     secure_variables:
       SONAR_TOKEN: AES:Q5W2/h9e6KcpwRk8dyMwVw==:B9OWBwvzy9v3eG0kTQkHqevScHXHf2Q+AuTVyVEE2BuPyfvBxiLd2X18h7qwI4rT
+      DOCKER_PASS: AES:jSN60dt4M071uEZ4Lz7h0Q==:RrDfKCeECDyKJ04g+vlzeg==
     materials:
       git-b35a29f:
         git: https://github.com/AT20-DevOps/AT20_MEETING_SERVICE.git
@@ -66,4 +67,22 @@ pipelines:
                         -Dsonar.projectKey=at20-lr \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=https://sonarcloud.io
-
+    - PackageAndPublish:
+        fetch_materials: true
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          docker:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - script: |
+                ls -la
+                docker build -t at20_meeting_service .
+                docker login -u lorenasing -p ${DOCKER_PASS}
+                docker tag at20_meeting_service lorenasing/meeting_service:${GIT_COMMIT_HASH}
+                docker push lorenasing/meeting_service:${GIT_COMMIT_HASH}
