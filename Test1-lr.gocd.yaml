@@ -42,7 +42,7 @@ pipelines:
             - build:
                 source: src
     - code_inspection:
-        fetch_materials: true
+        fetch_materials: false
         keep_artifacts: false
         clean_workspace: false
         approval:
