@@ -84,5 +84,5 @@ pipelines:
                 ls -la
                 docker build -t at20_meeting_service .
                 docker login -u lorenasing -p ${DOCKER_PASS}
-                docker tag at20_meeting_service lorenasing/meeting-service:1.2
-                docker push lorenasing/meeting-service:1.2
+                docker tag at20_meeting_service lorenasing/meeting-service:${GIT_COMMIT_HASH}
+                docker push lorenasing/meeting-service:${GIT_COMMIT_HASH}
