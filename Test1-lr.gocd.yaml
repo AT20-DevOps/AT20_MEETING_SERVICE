@@ -5,7 +5,7 @@ pipelines:
     label_template: ${COUNT}
     lock_behavior: none
     display_order: -1
-    enviroment_variables:
+    environment_variables:
       GIT_COMMIT_HASH: 1.2
     secure_variables:
       SONAR_TOKEN: AES:Q5W2/h9e6KcpwRk8dyMwVw==:B9OWBwvzy9v3eG0kTQkHqevScHXHf2Q+AuTVyVEE2BuPyfvBxiLd2X18h7qwI4rT
@@ -84,5 +84,5 @@ pipelines:
                 ls -la
                 docker build -t at20_meeting_service .
                 docker login -u lorenasing -p ${DOCKER_PASS}
-                docker tag at20_meeting_service lorenasing/meeting-service:1.2
-                docker push lorenasing/meeting-service:1.2
+                docker tag at20_meeting_service lorenasing/meeting-service:${GIT_COMMIT_HASH}
+                docker push lorenasing/meeting-service:${GIT_COMMIT_HASH}
