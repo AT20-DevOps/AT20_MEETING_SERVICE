@@ -40,8 +40,7 @@ pipelines:
                 source: test-report.html
                 destination: html_report
             - build:
-                source: ./
-                destination: meeting_service
+                source: src
     - code_inspection:
         fetch_materials: false
         keep_artifacts: false
