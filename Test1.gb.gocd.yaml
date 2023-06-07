@@ -68,7 +68,7 @@ pipelines:
                         -Dsonar.sources=. \
                         -Dsonar.host.url=https://sonarcloud.io
     - PackageAndPublish:
-        fetch_materials: false
+        fetch_materials: true
         keep_artifacts: false
         clean_workspace: false
         approval:
