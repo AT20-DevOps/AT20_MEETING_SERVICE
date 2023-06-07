@@ -87,7 +87,8 @@ pipelines:
                 docker tag at20-meeting_service gioblanco/meeting-service:${GIT_COMMIT_HASH}
                 docker push gioblanco/meeting-service:${GIT_COMMIT_HASH}
             artifacts:
-              source: docker-compose.gb.yaml
+            - build:
+                source: docker-compose.gb.yaml
   Acceptance:
     group: AT20Group
     label_template: ${COUNT}
