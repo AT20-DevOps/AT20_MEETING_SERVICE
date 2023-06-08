@@ -123,6 +123,7 @@ pipelines:
                 is_file: true
                 run_if: passed
             - script: |
-                echo deploy command here
+                echo deploy here
                 ls -la
+                export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose -f docker-compose.lr.yaml up -d
 
