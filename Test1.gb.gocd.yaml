@@ -39,9 +39,6 @@ pipelines:
             - build:
                 source: test-report.html
                 destination: html_report
-            - build:
-                source: ./
-                destination: AT20_meeting_service
     - code-inspection:
         fetch_materials: false
         keep_artifacts: false
@@ -63,7 +60,7 @@ pipelines:
                         -Dsonar.sources=. \
                         -Dsonar.host.url=https://sonarcloud.io
     - PackageAndPublish:
-        fetch_materials: false
+        fetch_materials: true
         keep_artifacts: false
         clean_workspace: false
         approval:
@@ -75,12 +72,6 @@ pipelines:
             resources:
             - docker
             tasks:
-            - fetch:
-                is_file: false
-                source: AT20_meeting_service
-                stage: Test
-                job: unit-test
-                run_if: passed
             - script: |
                 ls -la
                 docker build -t at20-meeting_service .
