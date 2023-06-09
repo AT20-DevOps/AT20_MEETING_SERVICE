@@ -5,3 +5,7 @@ loggerService.js
 .gitignore
 Jenkinsfile-gb
 Jenkinsfile-lr
+README.md
+Test1.gb.gocd.yaml
+Test1-lr.gocd.yaml
+test-report.html
