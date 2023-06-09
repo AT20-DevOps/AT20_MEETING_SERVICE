@@ -16,7 +16,7 @@ pipelines:
         username: LorenaRamirez7
         shallow_clone: false
         auto_update: true
-        branch: task11-lr
+        branch: task12-lr
         encrypted_password: AES:6a4/4/OoKZxamQZgXIBYvA==:5LzbO4pHEhy2wqbprrvUWA==
     stages:
     - Test:
@@ -84,5 +84,60 @@ pipelines:
                 ls -la
                 docker build -t at20_meeting_service .
                 docker login -u lorenasing -p ${DOCKER_PASS}
-                docker tag at20_meeting_service lorenasing/meeting-service:${GIT_COMMIT_HASH}
-                docker push lorenasing/meeting-service:${GIT_COMMIT_HASH}
+                docker tag at20_meeting_service lorenasing/meeting_service:${GIT_COMMIT_HASH}
+                docker push lorenasing/meeting_service:${GIT_COMMIT_HASH}
+            artifacts:
+            - build:
+                source: docker-compose.lr.yaml
+ 
+  Acceptance:
+    group: AT20Group
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    environment_variables:
+      GIT_COMMIT_HASH: 1.2
+    materials:
+      Test1:
+        pipeline: Test1
+        stage: PackageAndPublish
+    stages:
+    - DeployToDev:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          deployToDev:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - fetch:
+                pipeline: Test1
+                stage: PackageAndPublish
+                job: docker
+                source: docker-compose.lr.yaml
+                is_file: true
+                run_if: passed
+            - script: |
+                echo deploy here
+                ls -la
+                export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose -f docker-compose.lr.yaml up -d
+    - Smoke:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          deployToDev:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - script: |
+                echo command to run smoke test
