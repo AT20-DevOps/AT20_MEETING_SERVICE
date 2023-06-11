@@ -116,6 +116,12 @@ pipelines:
             - docker
             tasks:
             - fetch:
+                is_file: true
+                source: gitHash.txt
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
                 pipeline: Test1
                 stage: PackageAndPublish
                 job: docker
