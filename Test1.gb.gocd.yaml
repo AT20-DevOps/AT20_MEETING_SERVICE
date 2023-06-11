@@ -16,7 +16,7 @@ pipelines:
         username: GioBlanco
         shallow_clone: false
         auto_update: true
-        branch: task12-gb
+        branch: task13-gb
         encrypted_password: AES:Wey6o299QCHHaHkYbzFuvQ==:AS+IvBKSX61BzsRj4K4b6A==
     stages:
     - Test:
@@ -33,12 +33,16 @@ pipelines:
             - ubuntu
             tasks:
             - script: |
+                git rev-parse --short HEAD > gitHash.txt
+                export GIT_COMMIT_HASH=$(cat gitHash.txt)
                 npm install
                 npm test
             artifacts:
             - build:
                 source: test-report.html
                 destination: html_report
+            - build:
+                source: gitHash.txt
     - code-inspection:
         fetch_materials: false
         keep_artifacts: false
@@ -53,7 +57,6 @@ pipelines:
             - ubuntu
             tasks:
             - script: |
-                ls -la
                 /godata/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner \
                         -Dsonar.organization=gb-at20 \
                         -Dsonar.projectKey=AT20-GB \
@@ -72,8 +75,14 @@ pipelines:
             resources:
             - docker
             tasks:
+            - fetch:
+                is_file: true
+                source: gitHash.txt
+                stage: Test
+                job: unit-test
+                run_if: passed
             - script: |
-                ls -la
+                export GIT_COMMIT_HASH=$(cat gitHash.txt)
                 docker build -t at20-meeting_service .
                 docker login -u gioblanco -p ${DOCKER_PASS}
                 docker tag at20-meeting_service gioblanco/meeting-service:${GIT_COMMIT_HASH}
@@ -114,8 +123,7 @@ pipelines:
                 is_file: true
                 run_if: passed
             - script: |
-                echo deploy here
-                ls -la
+                export GIT_COMMIT_HASH=$(cat gitHash.txt)
                 export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose -f docker-compose.gb.yaml up -d
     - Smoke:
         fetch_materials: false
