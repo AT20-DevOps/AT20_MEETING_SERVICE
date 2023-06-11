@@ -116,10 +116,11 @@ pipelines:
             - docker
             tasks:
             - fetch:
-                is_file: true
-                source: gitHash.txt
+                pipeline: Test1
                 stage: Test
                 job: unit-test
+                source: gitHash.txt
+                is_file: true
                 run_if: passed
             - fetch:
                 pipeline: Test1
