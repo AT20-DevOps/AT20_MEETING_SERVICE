@@ -63,7 +63,7 @@ pipelines:
                         -Dsonar.sources=. \
                         -Dsonar.host.url=https://sonarcloud.io
     - PackageAndPublish:
-        fetch_materials: true
+        fetch_materials: false
         keep_artifacts: false
         clean_workspace: false
         approval:
@@ -76,8 +76,8 @@ pipelines:
             - docker
             tasks:
             - fetch:
-                is_file: true
-                source: gitHash.txt
+                is_file: false
+                source: ./
                 stage: Test
                 job: unit-test
                 run_if: passed
