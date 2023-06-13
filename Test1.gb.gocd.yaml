@@ -56,6 +56,7 @@ pipelines:
             - ubuntu
             tasks:
             - fetch:
+                pipeline: Commit
                 is_file: false
                 source: ./
                 stage: Test
@@ -81,12 +82,14 @@ pipelines:
             - docker
             tasks:
             - fetch:
+                pipeline: Commit
                 is_file: false
                 source: ./
                 stage: Test
                 job: unit-test
                 run_if: passed
             - script: |
+                ls -la
                 export GIT_COMMIT_HASH=$(cat gitHash.txt)
                 docker build -t at20-meeting_service .
                 docker login -u gioblanco -p ${DOCKER_PASS}
