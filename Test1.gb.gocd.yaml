@@ -146,7 +146,7 @@ pipelines:
             tasks:
             - script: |
                 echo command to run smoke test 
-  Capacity_testing:
+  CapacityTesting:
     group: AT20Group
     label_template: ${COUNT}
     lock_behavior: none
