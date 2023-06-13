@@ -1,6 +1,6 @@
 format_version: 10
 pipelines:
-  Test1:
+  Build:
     group: AT20Group
     label_template: ${COUNT}
     lock_behavior: none
@@ -97,8 +97,8 @@ pipelines:
     environment_variables:
       GIT_COMMIT_HASH: 1.2
     materials:
-      Test1:
-        pipeline: Test1
+      Build:
+        pipeline: Build
         stage: PackageAndPublish
     stages:
     - DeployToDev:
@@ -115,22 +115,22 @@ pipelines:
             - docker
             tasks:
             - fetch:
-                pipeline: Test1
+                pipeline: Build
                 stage: Test
                 job: unit-test
                 source: gitHash.txt
                 is_file: true
                 run_if: passed
             - fetch:
-                pipeline: Test1
+                pipeline: Build
                 stage: PackageAndPublish
                 job: docker
                 source: docker-compose.gb.yaml
                 is_file: true
                 run_if: passed
             - script: |
-                export GIT_COMMIT_HASH=$(cat gitHash.txt)
-                export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose -f docker-compose.gb.yaml up -d
+                export TAG_VERSION=$(cat gitHash.txt)
+                docker-compose -f docker-compose.gb.yaml up -d
     - Smoke:
         fetch_materials: false
         keep_artifacts: false
@@ -155,9 +155,9 @@ pipelines:
       GIT_COMMIT_HASH: 1.2
       TARGET_HOST: 192.168.0.46
     materials:
-      Test1:
-        pipeline: Test1
-        stage: PackageAndPublish
+      Acceptance:
+        pipeline: Acceptance
+        stage: Smoke
     stages:
     - DeployToAUTO:
         fetch_materials: false
@@ -173,14 +173,14 @@ pipelines:
             - docker
             tasks:
             - fetch:
-                pipeline: Test1
+                pipeline: Build
                 stage: Test
                 job: unit-test
                 source: gitHash.txt
                 is_file: true
                 run_if: passed
             - fetch:
-                pipeline: Test1
+                pipeline: Build
                 stage: PackageAndPublish
                 job: docker
                 source: docker-compose.gb.yaml
@@ -190,3 +190,18 @@ pipelines:
                 export GIT_COMMIT_HASH=$(cat gitHash.txt)
                 export TAG_VERSION=${GIT_COMMIT_HASH} 
                 DOCKER_HOST=ssh://$TARGET_HOST docker-compose -f docker-compose.gb.yaml up -d
+    - capacityTesting:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          test:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - script: |
+                echo command here to run capacity testing
