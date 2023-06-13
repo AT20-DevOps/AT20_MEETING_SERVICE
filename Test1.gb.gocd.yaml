@@ -1,6 +1,6 @@
 format_version: 10
 pipelines:
-  Build:
+  Commit:
     group: AT20Group
     label_template: ${COUNT}
     lock_behavior: none
@@ -98,7 +98,7 @@ pipelines:
       GIT_COMMIT_HASH: 1.2
     materials:
       Build:
-        pipeline: Build
+        pipeline: Commit
         stage: PackageAndPublish
     stages:
     - DeployToDev:
@@ -115,14 +115,14 @@ pipelines:
             - docker
             tasks:
             - fetch:
-                pipeline: Build
+                pipeline: Commit
                 stage: Test
                 job: unit-test
                 source: gitHash.txt
                 is_file: true
                 run_if: passed
             - fetch:
-                pipeline: Build
+                pipeline: Commit
                 stage: PackageAndPublish
                 job: docker
                 source: docker-compose.gb.yaml
@@ -173,14 +173,14 @@ pipelines:
             - docker
             tasks:
             - fetch:
-                pipeline: Build
+                pipeline: Commit
                 stage: Test
                 job: unit-test
                 source: gitHash.txt
                 is_file: true
                 run_if: passed
             - fetch:
-                pipeline: Build
+                pipeline: Commit
                 stage: PackageAndPublish
                 job: docker
                 source: docker-compose.gb.yaml
