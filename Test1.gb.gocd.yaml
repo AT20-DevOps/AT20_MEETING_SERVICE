@@ -77,7 +77,6 @@ pipelines:
             - fetch:
                 is_file: false
                 source: ./
-                pipeline: Commit
                 stage: Test
                 job: unit-test
                 run_if: passed
