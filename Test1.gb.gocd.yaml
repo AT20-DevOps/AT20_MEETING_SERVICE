@@ -88,6 +88,12 @@ pipelines:
             tasks:
             - fetch:
                 is_file: true
+                source: gitHash.txt
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
+                is_file: true
                 source: docker-compose.gb.yaml
                 stage: Test
                 job: unit-test
