@@ -49,6 +49,8 @@ pipelines:
                 source: package.json
                 destination: meeting_service
             - build:
+                source: docker-compose.gb.yaml
+            - build:
                 source: Dockerfile
                 destination: meeting_service
     - code-inspection:
