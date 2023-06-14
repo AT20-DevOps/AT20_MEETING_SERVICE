@@ -78,5 +78,16 @@ pipeline {
             sh 'docker rmi $(docker images -f "dangling=true" -q)'
             sh 'docker system prune -a'
         }
+        success {
+            emailext body: 'The Meeting service build was executed successfully. Logs: ',
+                    subject: '"Meeting Service" Success',
+                    to: 'malorasi@gmail.com',
+                    attachLog: true
+        }
+        failure {
+            emailext body: 'The Meeting service build was failed. Logs: ',
+                    subject: '"Meeting Service" Failed',
+                    to: 'malorasi@gmail.com',
+                    attachLog: true
     }
 }
