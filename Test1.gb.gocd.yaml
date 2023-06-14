@@ -8,8 +8,8 @@ pipelines:
     environment_variables:
       GIT_COMMIT_HASH: 1.2
     secure_variables:
-      SONAR_TOKEN: AES:5Y+WdbCALNBBhH4RP7heqA==:WOpYrtphrghvSQ3XMOb3SQFJCzMK6rZqjdDfPO1A/s5hfZfGLUqBPVMbjxNWnZC4
-      DOCKER_PASS: AES:8d3+NnDMZsxfMp6j2lKYCg==:L6PgVU7iwKwOCoXZirpUEA==
+      SONAR_TOKEN: AES:Y8Oucosuf8b2N+bRLUvYSA==:Ugb1QwyKgaPStcwZS59RcPOkl1x9yo5mA+oJafJ2yKL4xTQeI9Nx49SxYd7fd8pB
+      DOCKER_PASS: AES:57HpoznTa72a/hYwcTgtTA==:JcmQWPWEqYWjuo2yVANcpw==
     materials:
       git-89e38d1:
         git: https://github.com/AT20-DevOps/AT20_MEETING_SERVICE.git
@@ -17,7 +17,7 @@ pipelines:
         shallow_clone: false
         auto_update: true
         branch: task13-gb
-        encrypted_password: AES:Wey6o299QCHHaHkYbzFuvQ==:AS+IvBKSX61BzsRj4K4b6A==
+        encrypted_password: AES:1QyBfUxd+Fqe95F89PZTxw==:/TMjhlhaJ5WbDKNceJ3TGw==
     stages:
     - Test:
         fetch_materials: true
@@ -67,7 +67,6 @@ pipelines:
             - ubuntu
             tasks:
             - script: |
-                ls -la
                 /godata/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner \
                         -Dsonar.organization=gb-at20 \
                         -Dsonar.projectKey=AT20-GB \
@@ -105,10 +104,8 @@ pipelines:
                 job: unit-test
                 run_if: passed
             - script: |
-                ls -la
                 export GIT_COMMIT_HASH=$(cat gitHash.txt)
                 cd meeting_service
-                ls -la
                 docker build -t at20-meeting_service .
                 docker login -u gioblanco -p ${DOCKER_PASS}
                 docker tag at20-meeting_service gioblanco/meeting-service:${GIT_COMMIT_HASH}
