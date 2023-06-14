@@ -93,6 +93,8 @@ pipelines:
             - script: |
                 ls -la
                 export GIT_COMMIT_HASH=$(cat gitHash.txt)
+                cd meeting_service
+                ls -la
                 docker build -t at20-meeting_service .
                 docker login -u gioblanco -p ${DOCKER_PASS}
                 docker tag at20-meeting_service gioblanco/meeting-service:${GIT_COMMIT_HASH}
