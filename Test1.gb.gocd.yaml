@@ -1,6 +1,6 @@
 format_version: 10
 pipelines:
-  Test1:
+  Commit:
     group: AT20Group
     label_template: ${COUNT}
     lock_behavior: none
@@ -8,16 +8,16 @@ pipelines:
     environment_variables:
       GIT_COMMIT_HASH: 1.2
     secure_variables:
-      SONAR_TOKEN: AES:5Y+WdbCALNBBhH4RP7heqA==:WOpYrtphrghvSQ3XMOb3SQFJCzMK6rZqjdDfPO1A/s5hfZfGLUqBPVMbjxNWnZC4
-      DOCKER_PASS: AES:8d3+NnDMZsxfMp6j2lKYCg==:L6PgVU7iwKwOCoXZirpUEA==
+      SONAR_TOKEN: AES:Y8Oucosuf8b2N+bRLUvYSA==:Ugb1QwyKgaPStcwZS59RcPOkl1x9yo5mA+oJafJ2yKL4xTQeI9Nx49SxYd7fd8pB
+      DOCKER_PASS: AES:57HpoznTa72a/hYwcTgtTA==:JcmQWPWEqYWjuo2yVANcpw==
     materials:
       git-89e38d1:
         git: https://github.com/AT20-DevOps/AT20_MEETING_SERVICE.git
         username: GioBlanco
         shallow_clone: false
         auto_update: true
-        branch: task12-gb
-        encrypted_password: AES:Wey6o299QCHHaHkYbzFuvQ==:AS+IvBKSX61BzsRj4K4b6A==
+        branch: task13-gb
+        encrypted_password: AES:1QyBfUxd+Fqe95F89PZTxw==:/TMjhlhaJ5WbDKNceJ3TGw==
     stages:
     - Test:
         fetch_materials: true
@@ -33,12 +33,26 @@ pipelines:
             - ubuntu
             tasks:
             - script: |
+                git rev-parse --short HEAD > gitHash.txt
                 npm install
                 npm test
             artifacts:
             - build:
                 source: test-report.html
                 destination: html_report
+            - build:
+                source: gitHash.txt
+            - build:
+                source: src
+                destination: meeting_service
+            - build:
+                source: package.json
+                destination: meeting_service
+            - build:
+                source: docker-compose.gb.yaml
+            - build:
+                source: Dockerfile
+                destination: meeting_service
     - code-inspection:
         fetch_materials: false
         keep_artifacts: false
@@ -48,19 +62,18 @@ pipelines:
           allow_only_on_success: false
         jobs:
           sonar:
-            timeout: 0
+            timeout: 15
             resources: 
             - ubuntu
             tasks:
             - script: |
-                ls -la
                 /godata/.sonar/sonar-scanner-4.7.0.2747-linux/bin/sonar-scanner \
                         -Dsonar.organization=gb-at20 \
                         -Dsonar.projectKey=AT20-GB \
                         -Dsonar.sources=. \
                         -Dsonar.host.url=https://sonarcloud.io
     - PackageAndPublish:
-        fetch_materials: true
+        fetch_materials: false
         keep_artifacts: false
         clean_workspace: false
         approval:
@@ -72,8 +85,27 @@ pipelines:
             resources:
             - docker
             tasks:
+            - fetch:
+                is_file: true
+                source: gitHash.txt
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
+                is_file: true
+                source: docker-compose.gb.yaml
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
+                is_file: false
+                source: meeting_service
+                stage: Test
+                job: unit-test
+                run_if: passed
             - script: |
-                ls -la
+                export GIT_COMMIT_HASH=$(cat gitHash.txt)
+                cd meeting_service
                 docker build -t at20-meeting_service .
                 docker login -u gioblanco -p ${DOCKER_PASS}
                 docker tag at20-meeting_service gioblanco/meeting-service:${GIT_COMMIT_HASH}
@@ -89,8 +121,8 @@ pipelines:
     environment_variables:
       GIT_COMMIT_HASH: 1.2
     materials:
-      Test1:
-        pipeline: Test1
+      Commit:
+        pipeline: Commit
         stage: PackageAndPublish
     stages:
     - DeployToDev:
@@ -107,16 +139,27 @@ pipelines:
             - docker
             tasks:
             - fetch:
-                pipeline: Test1
+                pipeline: Commit
+                stage: Test
+                job: unit-test
+                source: gitHash.txt
+                is_file: true
+                run_if: passed
+            - fetch:
+                pipeline: Commit
                 stage: PackageAndPublish
                 job: docker
                 source: docker-compose.gb.yaml
                 is_file: true
                 run_if: passed
             - script: |
-                echo deploy here
-                ls -la
-                export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose -f docker-compose.gb.yaml up -d
+                export TAG_VERSION=$(cat gitHash.txt)
+                docker-compose -f docker-compose.gb.yaml up -d
+            artifacts:
+            - build:
+                source: gitHash.txt
+            - build:
+                source: docker-compose.gb.yaml
     - Smoke:
         fetch_materials: false
         keep_artifacts: false
@@ -132,3 +175,62 @@ pipelines:
             tasks:
             - script: |
                 echo command to run smoke test 
+  CapacityTesting:
+    group: AT20Group
+    label_template: ${COUNT}
+    lock_behavior: none
+    display_order: -1
+    environment_variables:
+      GIT_COMMIT_HASH: 1.2
+      TARGET_HOST: 192.168.0.46
+    materials:
+      Acceptance:
+        pipeline: Acceptance
+        stage: Smoke
+    stages:
+    - DeployToAUTO:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          deployToAUTO:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - fetch:
+                pipeline: Acceptance
+                stage: DeployToDev
+                job: deployToDev
+                source: gitHash.txt
+                is_file: true
+                run_if: passed
+            - fetch:
+                pipeline: Acceptance
+                stage: DeployToDev
+                job: deployToDev
+                source: docker-compose.gb.yaml
+                is_file: true
+                run_if: passed
+            - script: |
+                export GIT_COMMIT_HASH=$(cat gitHash.txt)
+                export TAG_VERSION=${GIT_COMMIT_HASH} 
+                DOCKER_HOST=ssh://$TARGET_HOST docker-compose -f docker-compose.gb.yaml up -d
+    - capacityTesting:
+        fetch_materials: false
+        keep_artifacts: false
+        clean_workspace: false
+        approval:
+          type: success
+          allow_only_on_success: false
+        jobs:
+          test:
+            timeout: 0
+            resources:
+            - docker
+            tasks:
+            - script: |
+                echo command here to run capacity testing
