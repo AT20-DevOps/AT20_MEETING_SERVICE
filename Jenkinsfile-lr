@@ -89,5 +89,6 @@ pipeline {
                     subject: '"Meeting Service" Failed',
                     to: 'malorasi@gmail.com',
                     attachLog: true
+        }
     }
 }
