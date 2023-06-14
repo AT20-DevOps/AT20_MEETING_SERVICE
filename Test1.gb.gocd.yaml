@@ -59,7 +59,7 @@ pipelines:
                 is_file: false
                 source: ./
                 stage: test
-                job: unitest
+                job: unit-test
                 run_if: passed
             - script: |
                 ls -la
