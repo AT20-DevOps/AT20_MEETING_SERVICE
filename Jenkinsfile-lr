@@ -61,13 +61,14 @@ pipeline {
         }
         stage('DeployToDev') {
             steps {
+                sh 'echo TAG_VERSION'
                 sh 'export TAG_VERSION=${GIT_COMMIT_HASH} && docker-compose -f docker-compose.lr.yaml up -d'
                 sh 'echo command to run smoke test'
             }
         }
         stage('DeployAuto') {
             steps {
-                sh 'DOCKER_HOST=ssh://$TARGET_HOST docker-compose -f docker-compose.lr.yaml up -d'
+                sh 'export TAG_VERSION=${GIT_COMMIT_HASH} && DOCKER_HOST=ssh://$TARGET_HOST docker-compose -f docker-compose.lr.yaml up -d'
                 sh 'echo command to run automation tests'
             }
         }
