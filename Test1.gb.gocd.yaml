@@ -87,6 +87,12 @@ pipelines:
             - docker
             tasks:
             - fetch:
+                is_file: true
+                source: docker-compose.gb.yaml
+                stage: Test
+                job: unit-test
+                run_if: passed
+            - fetch:
                 is_file: false
                 source: meeting_service
                 stage: Test
