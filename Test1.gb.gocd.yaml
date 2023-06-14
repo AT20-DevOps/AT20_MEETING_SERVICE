@@ -155,6 +155,11 @@ pipelines:
             - script: |
                 export TAG_VERSION=$(cat gitHash.txt)
                 docker-compose -f docker-compose.gb.yaml up -d
+            artifacts:
+            - build:
+                source: gitHash.txt
+            - build:
+                source: docker-compose.gb.yaml
     - Smoke:
         fetch_materials: false
         keep_artifacts: false
@@ -179,9 +184,9 @@ pipelines:
       GIT_COMMIT_HASH: 1.2
       TARGET_HOST: 192.168.0.46
     materials:
-      Commit:
-        pipeline: Commit
-        stage: PackageAndPublish
+      Acceptance:
+        pipeline: Acceptance
+        stage: Smoke
     stages:
     - DeployToAUTO:
         fetch_materials: false
@@ -197,16 +202,16 @@ pipelines:
             - docker
             tasks:
             - fetch:
-                pipeline: Commit
-                stage: Test
-                job: unit-test
+                pipeline: Acceptance
+                stage: DeployToDev
+                job: deployToDev
                 source: gitHash.txt
                 is_file: true
                 run_if: passed
             - fetch:
-                pipeline: Commit
-                stage: PackageAndPublish
-                job: docker
+                pipeline: Acceptance
+                stage: DeployToDev
+                job: deployToDev
                 source: docker-compose.gb.yaml
                 is_file: true
                 run_if: passed
