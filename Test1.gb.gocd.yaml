@@ -62,7 +62,7 @@ pipelines:
           allow_only_on_success: false
         jobs:
           sonar:
-            timeout: 15
+            timeout: 10
             resources: 
             - ubuntu
             tasks:
